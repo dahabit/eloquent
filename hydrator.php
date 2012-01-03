@@ -1,4 +1,4 @@
-<?php namespace Laravel\Database\Eloquent;
+<?php namespace Eloquent;
 
 class Hydrator {
 

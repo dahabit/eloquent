@@ -1,9 +1,8 @@
-<?php namespace Laravel\Database\Eloquent;
+<?php namespace Eloquent;
 
 use Laravel\Str;
-use Laravel\Inflector;
 use Laravel\Paginator;
-use Laravel\Database\Manager as DB;
+use Laravel\Database as DB;
 
 abstract class Model {
 
@@ -164,7 +163,7 @@ abstract class Model {
 	{
 		if (property_exists($class, 'table')) return $class::$table;
 
-		return strtolower(Inflector::plural(static::model_name($class)));
+		return strtolower(Str::plural(static::model_name($class)));
 	}
 
 	/**
@@ -363,7 +362,7 @@ abstract class Model {
 	 */
 	private function intermediate_table($model)
 	{
-		$models = array(Inflector::plural(static::model_name($model)), Inflector::plural(static::model_name($this)));
+		$models = array(Str::plural(static::model_name($model)), Str::plural(static::model_name($this)));
 
 		sort($models);
 
