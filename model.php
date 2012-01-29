@@ -346,7 +346,7 @@ abstract class Model {
 		$associated_key = (is_null($associated_key)) ? strtolower(static::model_name($model)).'_id' : $associated_key;
 
 		return static::query($model)
-                             ->select(array(static::table($model).'.*'))
+                             ->select(array(static::table($model).'.*', $this->relating_table.'.'.$this->relating_key))
                              ->join($this->relating_table, static::table($model).'.id', '=', $this->relating_table.'.'.$associated_key)
                              ->where($this->relating_table.'.'.$this->relating_key, '=', $this->id);
 	}
