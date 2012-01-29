@@ -1,6 +1,6 @@
 <?php
 
 Laravel\Autoloader::map(array(
-	'Eloquent\\Model'    => path('bundle').'eloquent/model'.EXT,
-	'Eloquent\\Hydrator' => path('bundle').'eloquent/hydrator'.EXT,
+	'Eloquent\\Model'    => __DIR__.DS.'model'.EXT,
+	'Eloquent\\Hydrator' => __DIR__.DS.'hydrator'.EXT,
 ));
