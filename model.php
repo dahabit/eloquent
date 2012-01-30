@@ -28,6 +28,13 @@ abstract class Model {
 	public static $sequence = null;
 
 	/**
+	 * The name of the primary key of the model.
+	 *
+	 * @var string
+	 */
+	public static $primary_key = 'id';
+
+	/**
 	 * The model query instance.
 	 *
 	 * @var Query
@@ -182,6 +189,17 @@ abstract class Model {
 	}
 
 	/**
+	 * Get the primary key for a model.
+	 *
+	 * @param  string  $class
+	 * @return string
+	 */
+	public static function pk($class)
+	{
+		return $class::$primary_key;
+	}
+
+	/**
 	 * Get all of the models from the database.
 	 *
 	 * @return array
@@ -199,7 +217,7 @@ abstract class Model {
 	 */
 	public static function find($id)
 	{
-		return static::query(get_called_class())->where('id', '=', $id)->first();
+		return static::query(get_called_class())->where(static::$primary_key, '=', $id)->first();
 	}
 
 	/**
@@ -287,7 +305,7 @@ abstract class Model {
 	{
 		$this->relating_key = (is_null($foreign_key)) ? strtolower(static::model_name($this)).'_id' : $foreign_key;
 
-		return static::query($model)->where($this->relating_key, '=', $this->id);
+		return static::query($model)->where($this->relating_key, '=', $this->{static::$primary_key});
 	}
 
 	/**
@@ -316,7 +334,7 @@ abstract class Model {
 			$this->relating_key = $caller['function'].'_id';
 		}
 
-		return static::query($model)->where('id', '=', $this->attributes[$this->relating_key]);
+		return static::query($model)->where(static::pk($model), '=', $this->attributes[$this->relating_key]);
 	}
 
 	/**
@@ -347,8 +365,8 @@ abstract class Model {
 
 		return static::query($model)
                              ->select(array(static::table($model).'.*', $this->relating_table.'.'.$this->relating_key))
-                             ->join($this->relating_table, static::table($model).'.id', '=', $this->relating_table.'.'.$associated_key)
-                             ->where($this->relating_table.'.'.$this->relating_key, '=', $this->id);
+                             ->join($this->relating_table, static::table($model).'.'.static::pk($model), '=', $this->relating_table.'.'.$associated_key)
+                             ->where($this->relating_table.'.'.$this->relating_key, '=', $this->{static::$primary_key});
 	}
 
 	/**
@@ -395,11 +413,11 @@ abstract class Model {
 		// Otherwise, we will insert the model and set the ID attribute.
 		if ($this->exists)
 		{
-			$success = ($this->query->where_id($this->attributes['id'])->update($this->dirty) === 1);
+			$success = ($this->query->where(static::$primary_key, '=', $this->attributes[static::$primary_key])->update($this->dirty) === 1);
 		}
 		else
 		{
-			$success = is_numeric($this->attributes['id'] = $this->query->insert_get_id($this->attributes, static::$sequence));
+			$success = is_numeric($this->attributes[static::$primary_key] = $this->query->insert_get_id($this->attributes, static::$sequence));
 		}
 
 		($this->exists = true) and $this->dirty = array();
@@ -435,7 +453,7 @@ abstract class Model {
 
 		$table = static::table(get_class($this));
 
-		return DB::connection(static::$connection)->table($table)->delete($this->id);
+		return DB::connection(static::$connection)->table($table)->delete($this->{static::$primary_key});
 	}
 
 	/**
