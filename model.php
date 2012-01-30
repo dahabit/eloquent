@@ -305,7 +305,7 @@ abstract class Model {
 	{
 		$this->relating_key = (is_null($foreign_key)) ? strtolower(static::model_name($this)).'_id' : $foreign_key;
 
-		return static::query($model)->where($this->relating_key, '=', $this->id);
+		return static::query($model)->where($this->relating_key, '=', $this->{static::$primary_key});
 	}
 
 	/**
@@ -334,7 +334,7 @@ abstract class Model {
 			$this->relating_key = $caller['function'].'_id';
 		}
 
-		return static::query($model)->where(static::$primary_key, '=', $this->attributes[$this->relating_key]);
+		return static::query($model)->where(static::pk($model), '=', $this->attributes[$this->relating_key]);
 	}
 
 	/**
