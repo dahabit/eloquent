@@ -261,8 +261,12 @@ abstract class Model {
 	 */
 	private function _paginate($per_page = null, $columns = array('*'))
 	{
+		list($orderings, $this->query->orderings) = array($this->query->orderings, null);
+
 		$total = $this->query->count();
 
+		$this->query->orderings = $orderings;
+		
 		// The number of models to show per page may be specified as a static property
 		// on the model. The models shown per page may also be overriden for the model
 		// by passing the number into this method. If the models to show per page is
