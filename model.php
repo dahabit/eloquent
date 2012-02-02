@@ -221,7 +221,7 @@ abstract class Model {
 	 * @param  array  $columns
 	 * @return mixed
 	 */
-	public static function find($id, $columns = array())
+	public static function find($id, $columns = array('*'))
 	{
 		return static::query(get_called_class())->where(static::$primary_key, '=', $id)->first($columns);
 	}
