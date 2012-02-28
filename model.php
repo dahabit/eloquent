@@ -545,7 +545,7 @@ abstract class Model {
 			return call_user_func_array(array($this, '_'.$method), $parameters);
 		}
 		
-		if(!$this->query) $this->query = static::query(get_class($this));
+		if ( ! $this->query) $this->query = static::query(get_class($this));
 
 		// All of the aggregate and persistance functions can be passed directly to the query
 		// instance. For these functions, we can simply return the response of the query.
