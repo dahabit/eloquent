@@ -35,6 +35,13 @@ abstract class Model {
 	public static $primary_key = 'id';
 
 	/**
+	 * An array of accessible attributes.
+	 *
+	 * @var array
+	 */
+	public static $attr_accessible = array();
+
+	/**
 	 * The model query instance.
 	 *
 	 * @var Query
@@ -49,7 +56,7 @@ abstract class Model {
 	public $exists = false;
 
 	/**
-	 * The model's attributes. 
+	 * The model's attributes.
 	 *
 	 * Typically, a model has an attribute for each column on the table.
 	 *
@@ -96,7 +103,7 @@ abstract class Model {
 	public $relating_key;
 
 	/**
-	 * The table name of the model being resolved. 
+	 * The table name of the model being resolved.
 	 *
 	 * This is used during many-to-many eager loading.
 	 *
@@ -125,6 +132,12 @@ abstract class Model {
 	{
 		foreach ($attributes as $key => $value)
 		{
+			if(is_array(static::$attr_accessible) && !empty(static::$attr_accessible))
+			{
+				if(array_search($key, static::$attr_accessible) === false)
+					continue;
+			}
+
 			$this->$key = $value;
 		}
 
@@ -266,7 +279,7 @@ abstract class Model {
 		$total = $this->query->count();
 
 		$this->query->orderings = $orderings;
-		
+
 		// The number of models to show per page may be specified as a static property
 		// on the model. The models shown per page may also be overriden for the model
 		// by passing the number into this method. If the models to show per page is
@@ -376,7 +389,7 @@ abstract class Model {
 		// the flexibility for self-referential many-to-many relationships.
 		$this->relating_key = (is_null($foreign_key)) ? strtolower(static::model_name($this)).'_id' : $foreign_key;
 
-		// The associated key is the foreign key name of the related model. 
+		// The associated key is the foreign key name of the related model.
 		// If the related model is "Role", the key would be "role_id".
 		$associated_key = (is_null($associated_key)) ? strtolower(static::model_name($model)).'_id' : $associated_key;
 
