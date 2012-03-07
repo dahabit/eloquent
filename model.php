@@ -509,6 +509,11 @@ abstract class Model {
 
 			return $this->ignore[$key] = (in_array($this->relating, array('has_one', 'belongs_to'))) ? $query->first() : $query->get();
 		}
+		elseif (method_exists($this, 'get_'.$key))
+		{
+			// call the getter
+			return $this->{'get_'.$key};
+		}
 	}
 
 	/**
@@ -521,6 +526,11 @@ abstract class Model {
 		if (method_exists($this, $key))
 		{
 			$this->ignore[$key] = $value;
+		}
+		elseif (method_exists($this, 'set_'.$key))
+		{
+			// call the setter
+			$this->{'set_'.$key}($value);
 		}
 		else
 		{
