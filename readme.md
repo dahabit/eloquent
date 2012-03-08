@@ -27,6 +27,8 @@ Add the following to your **application/bundles.php** file:
 - [Inserting & Updating Models](#save)
 - [Relationships](#relationships)
 - [Eager Loading](#eager)
+- [Setter & Getter Methods](#settergettermethods)
+- [Mass-assignment White-list](#massassignmentwhitelist)
 
 An ORM is an [object-relational mapper](http://en.wikipedia.org/wiki/Object-relational_mapping), and Laravel has one that you will absolutely love to use. It is named "Eloquent" because it allows you to work with your database objects and relationships using an eloquent and expressive syntax. In general, you will define one Eloquent model for each table in your database. To get started, let's define a simple model:
 
@@ -325,3 +327,65 @@ Need to eager load more than one relationship? It's easy:
 	$books = Book::with('author', 'publisher')->get();
 
 > **Note:** When eager loading, the call to the static **with** method must always be at the beginning of the query.
+
+<a name="settergettermethods"></a>
+### Getter & Setter Methods
+
+Setters allow you to handle attribute assignment with custom methods.  Define a setter by appending "set_" to the intended attribute's name.
+
+	public function set_password($password)
+	{
+		$this->hashed_password = Hash::make($password);
+	}
+
+Call a setter method as a variable (without parenthesis) using the name of the method without the "set_" prefix.
+
+	$this->password = "my new password";
+
+Getters are very similar.  They can be used to modify attributes before they're returned.  Define a getter by appending "get_" to the intended attribute's name.
+
+	public function get_published_date()
+	{
+		return date('M j, Y', $this->published_at);
+	}
+
+Call the getter method as a variable (without parenthesis) using the name of the method without the "get_" prefix.
+
+	echo $this->published_date;
+
+<a name="massassignmentwhitelist"></a>
+### Mass-assignment White-list
+
+Mass-assignment is the practice of passing an associative array to a model method which then fills the model's attributes with the values from the array.  
+
+Mass-assignment can be done by passing an array to the model's constructor 
+
+	// constructor method
+
+	$user = new User(array(
+		'username' => 'first last',
+		'password' => 'disgaea'
+	));
+
+	$user->save();
+
+or by using the fill() method.
+
+	// fill method
+
+	$user = new User;
+
+	$user->fill(array(
+		'username' => 'first last',
+		'password' => 'disgaea'
+	));
+
+	$user->save();
+
+By default, all attribute key/value pairs will be store during mass-assignment.  However, it is possible to create a white-list of attributes that will be set.  If the accessible attribute white-list is set then no attributes other than those specified will be set during mass-assignment.
+
+You can specify accessible attributes by assigning the $attr_accessible static array.  Each element contains the name of a white-listed attribute.
+
+	public static $attr_accessible = array('email', 'password', 'name');
+
+> **Note:** Utmost caution should be taken when mass-assigning using user-input.  Technical oversights could cause serious security vulnerabilities.
